@@ -1,0 +1,24 @@
+{
+  "name": "sandbox-moleculer-db",
+  "version": "1.0.0",
+  "description": "Moleculer DB service sandbox",
+  "main": "services/greeter.service.js",
+  "scripts": {
+    "start": "moleculer-runner --hot services",
+    "mon": "nodemon --exec node_modules/moleculer/bin/moleculer-runner.js services"
+  },
+  "devDependencies": {
+    "moleculer-repl": "^0.5.3",
+    "nodemon": "1.18.4"
+  },
+  "dependencies": {
+    "fakerator": "^0.3.0",
+    "moleculer": "^0.13.0",
+    "moleculer-db": "^0.7.9",
+    "moleculer-web": "^0.8.0"
+  },
+  "engines": {
+    "node": ">= 8.x.x"
+  },
+  "keywords": []
+}

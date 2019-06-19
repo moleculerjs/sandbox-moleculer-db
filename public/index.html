@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Moleculer Routing Examples</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700&display=swap&subset=latin-ext"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        font-family: "Ubuntu", sans-serif;
+      }
+
+      h2 {
+        margin-top: 2em;
+      }
+
+      li {
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+
+      ul.examples li {
+        margin-bottom: 1em;
+      }
+
+      .get {
+        color: green;
+        font-weight: bold;
+      }
+
+      .post {
+        color: orange;
+        font-weight: bold;
+      }
+
+      .put {
+        color: blue;
+        font-weight: bold;
+      }
+
+      .delete {
+        color: red;
+        font-weight: bold;
+      }
+
+      .response {
+        padding: 0.5em;
+        margin-top: 0.5em;
+				background-color: #EEE;
+				border: 1px solid #ccc; 
+        display: none;
+      }
+
+      .response.error {
+        background-color: #f1c2c2;
+      }
+
+      code.body {
+        display: block;
+      }
+
+			pre.json {
+				padding: 5px; 
+				margin: 2%;
+				color: Black;
+				overflow: auto;
+			}
+			pre.json .string { color: #885800; }
+			pre.json .number { color: blue; }
+			pre.json .boolean { color: magenta; }
+			pre.json .null { color: red; }
+			pre.json .key { color: green; }
+    </style>
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>Moleculer Database Examples</h1>
+
+    <h2>Default Database Endpoints</h2>
+
+    <ul class="examples">
+      <li>
+        Examples are requesting the <em>articles.service.js</em> default database actions.
+        Even if there are no visible endpoints in the service itself,
+        the default database actions are inherited through the [DbService] mixin.
+      </li>
+
+      <li>
+        The <em>"id"</em> field is populated just to showcase the GET /
+        PUT / DELETE operations. In real life it is normally generated automatically, and you don't have to add it manually.
+      </li>
+
+    <h4>Examples:</h4>
+
+    <ul>
+      <li data-url="/api/articles" data-method="GET">
+        List all articles (with all fields)
+      </li>
+      <li data-url="/api/articles?fields=title,author&populate=author&pageSize=5" data-method="GET">
+        List articles (with filtered fields & populated author)
+      </li>
+      <li data-url="/api/articles?fields=title,votes&sort=-votes&pageSize=5" data-method="GET">
+        List Top 5 articles (most voted)
+      </li>
+      <li data-url="/api/articles/DhEzwV4aEJopm75a?populate=author" data-method="GET">
+        Get an article by ID (with all fields & populates)
+      </li>
+      <li
+        data-url="/api/articles"
+        data-method="POST"
+        data-body='{
+					"title" : "Article title",
+					"content" : "Article content",
+					"author" : "0XVEhTgNcuopEvdi"
+				}'
+      >
+        Create a new article
+      </li>
+      <li
+        data-url="/api/articles/rE7LfpyNIsDzI7Qw"
+        data-method="PUT"
+        data-body='{
+					"title" : "Modified article title",
+					"content" : "Modified article content"
+				}'
+      >
+        Update an article by ID (replace the id with a valid one from the list
+        above)
+      </li>
+      <li
+        data-url="/api/articles/rE7LfpyNIsDzI7Qw"
+        data-method="DELETE"
+        data-body=""
+      >
+        Remove an article by ID (replace the id with a valid one from the list
+        above)
+      </li>
+    </ul>
+
+		<h3>Additional actions (voting)</h3>
+
+    <ul>
+      <li data-url="/api/articles/DhEzwV4aEJopm75a/vote" data-method="PUT">
+        Vote an article
+      </li>
+      <li data-url="/api/articles/DhEzwV4aEJopm75a/unvote" data-method="PUT">
+        Unvote an article
+      </li>
+		</ul>
+    <p>
+      Official Documentation: <br /><a
+        href="https://moleculer.services/docs/0.13/moleculer-db.html"
+        >https://moleculer.services/docs/0.13/moleculer-db.html</a
+      >
+    </p>
+
+    <script>
+			function prettyJSON(json) {
+				if (json) {
+					json = JSON.stringify(json, undefined, 4);
+					json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+					return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, function (match) {
+						let cls = "number";
+						if (/^"/.test(match)) {
+							if (/:$/.test(match)) {
+								cls = "key";
+							} else {
+								cls = "string";
+							}
+						} else if (/true|false/.test(match)) {
+							cls = "boolean";
+						} else if (/null/.test(match)) {
+							cls = "null";
+						}
+						return "<span class=\"" + cls + "\">" + match + "</span>";
+					});
+				}
+			}
+
+      $(document).ready(function() {
+        $("li[data-url]").each(function(i, item) {
+          const itemData = $(item).data();
+          $(item)
+            .append([
+              $("<br/>"),
+              $("<code></code>")
+                .addClass(itemData.method.toLowerCase())
+                .text(itemData.method + " "),
+              $("<a></a>")
+                .attr("href", itemData.url)
+                .append("<code>" + itemData.url + "</code>"),
+              itemData.body
+                ? $(
+                    "<code class='body'>Body " +
+                      JSON.stringify(itemData.body, null, 4) +
+                      "</code>"
+                  )
+                : null
+            ])
+            .append("<div class='response'><pre class='json'><code></code></pre></div>")
+
+            .find("a")
+            .attr("href", "#")
+            .on("click", function() {
+              //console.log(itemData);
+              var method = (itemData.method || "GET").toLowerCase();
+              axios({
+                method: method,
+                url: itemData.url,
+                data: itemData.body
+              })
+                .then(function(res) {
+                  console.log("Response", res.data);
+                  $(item)
+                    .find(".response")
+                    .addClass("success")
+                    .removeClass("error")
+                    .find("code")
+                    .html(prettyJSON(res.data));
+
+                  $(item)
+                    .find(".response")
+                    .show();
+                })
+                .catch(function(err) {
+                  console.error("Error", err);
+                  $(item)
+                    .find(".response")
+										.addClass("error")
+										.removeClass("success")
+                    .find("code")
+                    .text(
+                      (err.response
+                        ? "Status: " +
+                          err.response.status +
+                          " " +
+                          err.response.statusText +
+                          "\n\n"
+                        : "") +
+                        JSON.stringify(
+                          err.response ? err.response.data : err,
+                          null,
+                          4
+                        )
+                    );
+
+                  $(item)
+                    .find(".response")
+                    .show();
+                });
+
+              return false;
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
