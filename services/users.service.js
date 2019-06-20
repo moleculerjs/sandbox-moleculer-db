@@ -1,7 +1,5 @@
-const path = require("path");
 const Fakerator = require("fakerator");
 const fakerator = Fakerator();
-
 const DbService = require("moleculer-db");
 
 module.exports = {
@@ -9,9 +7,7 @@ module.exports = {
 
   mixins: [DbService],
 
-  adapter: new DbService.MemoryAdapter({
-    filename: path.join(__dirname, "..", "db", "users.db")
-  }),
+  adapter: new DbService.MemoryAdapter(),
 
   settings: {
     // Available fields
